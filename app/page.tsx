@@ -1,15 +1,12 @@
-'use client'
+'use client';
 
 import FlowComponent from '@/components/Flow';
 import '@xyflow/react/dist/style.css';
 
- 
-function Flow() {
+export default function FlowPage() {
   return (
-    <div style={{ height: '100%' }}>
-     <FlowComponent />
+    <div className="min-h-screen h-full">
+      <FlowComponent />
     </div>
   );
 }
- 
-export default Flow;
