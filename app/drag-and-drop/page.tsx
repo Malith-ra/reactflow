@@ -13,22 +13,18 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import React, { DragEvent, useCallback, useEffect, useRef } from 'react';
+import React, {
+  DragEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { DnDProvider, useDnD } from '@/components/drag/DnDContext';
 import Sidebar from '@/components/drag/Sidebar';
 import { nodeDragTypes } from '@/components/nodes/dragNodes';
 import '@xyflow/react/dist/style.css';
-
-const getId = () => {
-  const currentId = parseInt(
-    localStorage.getItem('node-id-counter') || '0',
-    10,
-  );
-  const newId = currentId + 1;
-  localStorage.setItem('node-id-counter', newId.toString());
-  return `dndnode_${newId}`;
-};
 
 const DnDFlow: React.FC = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -36,6 +32,7 @@ const DnDFlow: React.FC = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
+  const [loading, setLoading] = useState(false);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => {
@@ -49,6 +46,14 @@ const DnDFlow: React.FC = () => {
     event.dataTransfer.dropEffect = 'move';
   }, []);
 
+  const getTypedId = (type: string): string => {
+    const key = `node-id-counter-${type}`;
+    const currentId = parseInt(localStorage.getItem(key) || '0', 10);
+    const newId = currentId + 1;
+    localStorage.setItem(key, newId.toString());
+    return `${type}_${newId}`;
+  };
+
   const onDrop = useCallback(
     (event: DragEvent) => {
       event.preventDefault();
@@ -60,11 +65,14 @@ const DnDFlow: React.FC = () => {
         y: event.clientY,
       });
 
+      const id = getTypedId(type);
+      const idNumber = id.split('_')[1]; // e.g., 3 from "start_3"
+
       const newNode: Node = {
-        id: getId(),
+        id,
         type,
         position,
-        data: { label: `${type} node` },
+        data: { label: `${type} node ${idNumber}` },
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -79,6 +87,12 @@ const DnDFlow: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!loading) {
+      setLoading(true);
+    }
+  }, [loading]);
+
+  useEffect(() => {
     const savedFlow = localStorage.getItem('flow-data');
     if (savedFlow) {
       const { nodes: savedNodes, edges: savedEdges } = JSON.parse(savedFlow);
@@ -88,7 +102,9 @@ const DnDFlow: React.FC = () => {
   }, [setNodes, setEdges]);
 
   useEffect(() => {
-    localStorage.setItem('flow-data', JSON.stringify({ nodes, edges }));
+    if (loading) {
+      localStorage.setItem('flow-data', JSON.stringify({ nodes, edges }));
+    }
   }, [nodes, edges]);
 
   return (
