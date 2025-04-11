@@ -1,50 +1,52 @@
-"use client";
+'use client';
 
-import React, { useRef, useCallback, DragEvent } from "react";
 import {
+  Background,
+  Connection,
+  Controls,
+  Edge,
+  Node,
   ReactFlow,
   ReactFlowProvider,
   addEdge,
-  useNodesState,
   useEdgesState,
-  Controls,
+  useNodesState,
   useReactFlow,
-  Background,
-  Connection,
-  Edge,
-  Node,
-} from "@xyflow/react";
+} from '@xyflow/react';
+import React, { DragEvent, useCallback, useEffect, useRef } from 'react';
 
-import "@xyflow/react/dist/style.css";
-import Sidebar from "@/components/drag/Sidebar";
-import { DnDProvider, useDnD } from "@/components/drag/DnDContext";
+import { DnDProvider, useDnD } from '@/components/drag/DnDContext';
+import Sidebar from '@/components/drag/Sidebar';
+import { nodeDragTypes } from '@/components/nodes/dragNodes';
+import '@xyflow/react/dist/style.css';
 
-const initialNodes: Node[] = [
-  {
-    id: "1",
-    type: "input",
-    data: { label: "input node" },
-    position: { x: 250, y: 5 },
-  },
-];
-
-let id = 0;
-const getId = () => `dndnode_${id++}`;
+const getId = () => {
+  const currentId = parseInt(
+    localStorage.getItem('node-id-counter') || '0',
+    10,
+  );
+  const newId = currentId + 1;
+  localStorage.setItem('node-id-counter', newId.toString());
+  return `dndnode_${newId}`;
+};
 
 const DnDFlow: React.FC = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
 
-  const onConnect = useCallback((params: Edge | Connection) => {
-    setEdges((eds) => addEdge(params, eds));
-  }, [setEdges]);
+  const onConnect = useCallback(
+    (params: Edge | Connection) => {
+      setEdges((eds) => addEdge(params, eds));
+    },
+    [setEdges],
+  );
 
   const onDragOver = useCallback((event: DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.dropEffect = 'move';
   }, []);
 
   const onDrop = useCallback(
@@ -67,14 +69,27 @@ const DnDFlow: React.FC = () => {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [screenToFlowPosition, type, setNodes]
+    [screenToFlowPosition, type, setNodes],
   );
 
   const onDragStart = (event: DragEvent, nodeType: string) => {
     setType(nodeType);
-    event.dataTransfer.setData("text/plain", nodeType);
-    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData('text/plain', nodeType);
+    event.dataTransfer.effectAllowed = 'move';
   };
+
+  useEffect(() => {
+    const savedFlow = localStorage.getItem('flow-data');
+    if (savedFlow) {
+      const { nodes: savedNodes, edges: savedEdges } = JSON.parse(savedFlow);
+      if (savedNodes) setNodes(savedNodes);
+      if (savedEdges) setEdges(savedEdges);
+    }
+  }, [setNodes, setEdges]);
+
+  useEffect(() => {
+    localStorage.setItem('flow-data', JSON.stringify({ nodes, edges }));
+  }, [nodes, edges]);
 
   return (
     <div className="dndflow">
@@ -82,13 +97,14 @@ const DnDFlow: React.FC = () => {
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          nodeTypes={nodeDragTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onDrop={onDrop}
           onDragOver={onDragOver}
           fitView
-          style={{ backgroundColor: "#F7F9FB" }}
+          style={{ backgroundColor: '#F7F9FB' }}
         >
           <Controls />
           <Background />

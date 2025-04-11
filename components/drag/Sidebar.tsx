@@ -10,7 +10,10 @@ type SidebarProps = {
 const Sidebar: React.FC<SidebarProps> = ({ onDragStart }) => {
   const [, setType] = useDnD();
 
-  const handleDragStart = (event: DragEvent<HTMLDivElement>, nodeType: string) => {
+  const handleDragStart = (
+    event: DragEvent<HTMLDivElement>,
+    nodeType: string,
+  ) => {
     setType(nodeType);
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
@@ -42,6 +45,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onDragStart }) => {
         onDragStart={(e) => handleDragStart(e, 'output')}
       >
         Output Node
+      </div>
+      <div
+        className="cursor-move start flex items-center gap-2 bg-green-700 text-white font-medium px-4 py-2 rounded-full shadow-md border border-green-500 w-fit"
+        draggable
+        onDragStart={(e) => handleDragStart(e, 'start')}
+      >
+        Start Node
       </div>
     </aside>
   );

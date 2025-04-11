@@ -54,25 +54,25 @@ a {
   width: 100vw;
   height: 100vh;
 }
- 
+
 .dndflow {
   flex-direction: column;
   display: flex;
   flex-grow: 1;
   height: 100%;
 }
- 
+
 .dndflow aside {
   border-right: 1px solid #eee;
   padding: 15px 10px;
   font-size: 12px;
   background: #fcfcfc;
 }
- 
+
 .dndflow aside .description {
   margin-bottom: 10px;
 }
- 
+
 .dndflow .dndnode {
   height: 20px;
   padding: 4px;
@@ -84,29 +84,29 @@ a {
   align-items: center;
   cursor: grab;
 }
- 
+
 .dndflow .dndnode.input {
   border-color: #0041d0;
 }
- 
+
 .dndflow .dndnode.output {
   border-color: #ff0072;
 }
- 
+
 .dndflow .reactflow-wrapper {
   flex-grow: 1;
   height: 100%;
 }
- 
+
 .dndflow .selectall {
   margin-top: 10px;
 }
- 
+
 @media screen and (min-width: 768px) {
   .dndflow {
     flex-direction: row;
   }
- 
+
   .dndflow aside {
     width: 20%;
     max-width: 250px;
@@ -123,9 +123,9 @@ a {
   /* Built-in Variables see https://reactflow.dev/learn/customization/theming */
   --xy-node-border-default: 1px solid #EDEDED;
 
-  --xy-node-boxshadow-default: 
-    0px 3.54px 4.55px 0px #00000005, 
-    0px 3.54px 4.55px 0px #0000000D, 
+  --xy-node-boxshadow-default:
+    0px 3.54px 4.55px 0px #00000005,
+    0px 3.54px 4.55px 0px #0000000D,
     0px 0.51px 1.01px 0px #0000001A;
 
   --xy-node-border-radius-default: 8px;
@@ -136,11 +136,14 @@ a {
   --xy-edge-label-color-default: #505050;
 }
 
-.react-flow.dark { 
-  --xy-node-boxshadow-default: 
-  0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.05), /* light shadow */
-  0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.13), /* medium shadow */
-  0px 0.51px 1.01px 0px rgba(255, 255, 255, 0.2);  /* smallest shadow */  
+.react-flow.dark {
+  --xy-node-boxshadow-default:
+    0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.05),
+    /* light shadow */
+    0px 3.54px 4.55px 0px rgba(255, 255, 255, 0.13),
+    /* medium shadow */
+    0px 0.51px 1.01px 0px rgba(255, 255, 255, 0.2);
+  /* smallest shadow */
   --xy-theme-color-focus: #535353;
 }
 
@@ -171,7 +174,7 @@ a {
 }
 
 
-.react-flow__node.selectable:hover, 
+.react-flow__node.selectable:hover,
 .react-flow__node.draggable:hover {
   border-color: var(--xy-theme-hover);
 }
@@ -201,7 +204,7 @@ a {
   background-color: white;
 }
 
-.react-flow__handle.connectionindicator:focus , 
+.react-flow__handle.connectionindicator:focus,
 .react-flow__handle.connectingfrom,
 .react-flow__handle.connectingto {
   border-color: var(--xy-theme-edge-hover);
@@ -218,4 +221,11 @@ a {
   border-radius: 0;
   width: 5px;
   height: 5px;
+}
+
+
+.react-flow__node-start {
+  background: transparent;
+  border: none;
+  box-shadow: none !important;
 }
