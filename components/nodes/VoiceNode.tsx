@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useReactFlow, NodeProps, Node } from '@xyflow/react';
+import { useReactFlow, NodeProps, Node, Handle, Position } from '@xyflow/react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -11,7 +11,7 @@ export type PositionLoggerNodeData = {
 
 export type PositionLoggerNode = Node & { data: PositionLoggerNodeData };
 
-const VoiceNode: React.FC<NodeProps<PositionLoggerNode>> = ({ id }) => {
+const VoiceNode: React.FC<NodeProps<PositionLoggerNode>> = ({ id,isConnectable }) => {
   const [transcript, setTranscript] = useState<string>('');
   const [listening, setListening] = useState<boolean>(false);
 
@@ -57,7 +57,13 @@ const VoiceNode: React.FC<NodeProps<PositionLoggerNode>> = ({ id }) => {
   };
 
   return (
-    <div className={`relative px-5 py-2 flex flex-col  bg-slate-600 text-white rounded shadow-md min-w-[140px] ${listening ? 'animate-pulse' : ''}`}>
+    <div
+      className={`relative px-5 py-2 flex flex-col  bg-slate-600 text-white rounded shadow-md min-w-[140px] ${
+        listening ? 'animate-pulse' : ''
+      }`}
+    >
+      <Handle type="target" position={Position.Left} isConnectable={isConnectable} />
+      <Handle type="source" position={Position.Right} />
       <div className="flex justify-end items-center">
         <Image
           width={10}
