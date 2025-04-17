@@ -224,7 +224,7 @@ a {
 }
 
 
-.react-flow__node-start {
+.react-flow__node-start,.react-flow__node-voice {
   background: transparent;
   border: none;
   box-shadow: none !important;

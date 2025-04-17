@@ -107,8 +107,11 @@ const DnDFlow: React.FC = () => {
     }
   }, [nodes, edges]);
 
+  
+
   return (
     <div className="dndflow">
+      <Sidebar onDragStart={onDragStart} />
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
         <ReactFlow
           nodes={nodes}
@@ -126,7 +129,6 @@ const DnDFlow: React.FC = () => {
           <Background />
         </ReactFlow>
       </div>
-      <Sidebar onDragStart={onDragStart} />
     </div>
   );
 };

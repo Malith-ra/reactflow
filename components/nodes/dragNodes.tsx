@@ -3,6 +3,7 @@ import PositionLoggerNode, {
   type PositionLoggerNode as PositionLoggerNodeType,
 } from './PositionLoggerNode';
 import StartNode from './StartNode';
+import VoiceNode from './VoiceNode';
 
 export const initialDragNodes = [
   {
@@ -30,11 +31,18 @@ export const initialDragNodes = [
     position: { x: 250, y: 100 },
     data: { label: 'Start' },
   },
+  {
+    id: 'voice',
+    type: 'voice',
+    position: { x: 250, y: 200 },
+    data: { label: 'Voice node 1' },
+  },
 ] satisfies Node[];
 
 export const nodeDragTypes: NodeTypes = {
   'position-logger': PositionLoggerNode,
   start: StartNode,
+  voice: VoiceNode,
   // Add any of your custom nodes here!
 };
 

@@ -53,6 +53,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onDragStart }) => {
       >
         Start Node
       </div>
+      <div
+        className="cursor-move start flex items-center gap-2 bg-slate-600 text-white font-medium px-4 py-2 rounded-xl shadow-md border border-slate-600 w-fit"
+        draggable
+        onDragStart={(e) => handleDragStart(e, 'voice')}
+      >
+        Voice Node
+      </div>
     </aside>
   );
 };
