@@ -1,5 +1,18 @@
 'use client';
 
+import {
+  Bot,
+  Circle,
+  FileInput,
+  FileOutput,
+  HashIcon,
+  Keyboard,
+  Mic,
+  PhoneForwarded,
+  Power,
+  QrCode,
+  Split
+} from 'lucide-react';
 import React, { DragEvent } from 'react';
 import { useDnD } from './DnDContext';
 
@@ -23,42 +36,150 @@ const Sidebar: React.FC<SidebarProps> = ({ onDragStart }) => {
   return (
     <aside className="p-4 space-y-4">
       <div className="text-sm text-gray-600">
-        You can drag these nodes to the pane on the right.
+      Drag New Node
       </div>
       <div
         className="dndnode input cursor-move"
         draggable
         onDragStart={(e) => handleDragStart(e, 'input')}
       >
-        Input Node
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <FileInput className="inline-block mr-1" size={16} />
+            Input Node
+          </div>
+        </div>
       </div>
       <div
         className="dndnode cursor-move"
         draggable
         onDragStart={(e) => handleDragStart(e, 'default')}
       >
-        Default Node
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <Keyboard className="inline-block mr-1" size={16} />
+            Default Node
+          </div>
+        </div>
       </div>
       <div
         className="dndnode output cursor-move"
         draggable
         onDragStart={(e) => handleDragStart(e, 'output')}
       >
-        Output Node
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <FileOutput className="inline-block mr-1" size={16} />
+            Output Node
+          </div>
+        </div>
       </div>
       <div
-        className="cursor-move start flex items-center gap-2 bg-green-700 text-white font-medium px-4 py-2 rounded-full shadow-md border border-green-500 w-fit"
+        className="dndnode cursor-move"
         draggable
         onDragStart={(e) => handleDragStart(e, 'start')}
       >
-        Start Node
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <Power className="inline-block mr-1" size={16} />
+            Start Node
+          </div>
+        </div>
       </div>
       <div
-        className="cursor-move start flex items-center gap-2 bg-slate-600 text-white font-medium px-4 py-2 rounded-xl shadow-md border border-slate-600 w-fit"
+        className="dndnode cursor-move"
         draggable
         onDragStart={(e) => handleDragStart(e, 'voice')}
       >
-        Voice Node
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <Mic className="inline-block mr-1" size={16} />
+            Voice Node
+          </div>
+        </div>
+      </div>
+      <div
+        className="dndnode input cursor-move"
+        draggable
+        onDragStart={(e) => handleDragStart(e, 'conversation')}
+      >
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <HashIcon className="inline-block mr-1" size={16} />
+            Conversation
+          </div>
+        </div>
+      </div>
+      <div
+        className="dndnode input cursor-move"
+        draggable
+        onDragStart={(e) => handleDragStart(e, 'function')}
+      >
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <Bot className="inline-block mr-1" size={16} />
+            Function
+          </div>
+        </div>
+      </div>
+      <div
+        className="dndnode input cursor-move"
+        draggable
+        onDragStart={(e) => handleDragStart(e, 'call-transfer')}
+      >
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <PhoneForwarded className="inline-block mr-1" size={16} />
+            Call Transfer
+          </div>
+        </div>
+      </div>
+      <div
+        className="dndnode input cursor-move"
+        draggable
+        onDragStart={(e) => handleDragStart(e, 'press-digit')}
+      >
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <QrCode className="inline-block mr-1" size={16} />
+            Press Digit
+          </div>
+        </div>
+      </div>
+      <div
+        className="dndnode input cursor-move"
+        draggable
+        onDragStart={(e) => handleDragStart(e, 'logic-split')}
+      >
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <Split className="inline-block mr-1" size={16} />
+            Logic Split Node
+          </div>
+        </div>
+      </div>
+      <div
+        className="dndnode input cursor-move"
+        draggable
+        onDragStart={(e) => handleDragStart(e, 'ending')}
+      >
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <Circle className="inline-block mr-1" size={16} />
+            Ending
+          </div>
+        </div>
       </div>
     </aside>
   );
