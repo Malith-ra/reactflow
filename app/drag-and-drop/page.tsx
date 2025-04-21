@@ -20,21 +20,33 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
+// import { useFlowControls } from '@/hooks/useFlowControls';
 import { DnDProvider, useDnD } from '@/components/drag/DnDContext';
 import Sidebar from '@/components/drag/Sidebar';
 import { nodeDragTypes } from '@/components/nodes/dragNodes';
 import '@xyflow/react/dist/style.css';
-import AgentSettingsPanel from '@/components/panals/AgentSettingsPanel';
+import AgentSettingsPanel from '@/components/agent_settings/AgentSettingsPanel';
+import { useAppSelector } from '@/common/utils/hooks/hooks';
+// import { setFlow } from '@/features/agent_flow/data/redux/flowRunnerSlice';
+import { RootState } from '@/common/data/redux/store';
+import { useFlowControls } from '@/components/agent_settings/hooks/useFlowControls';
 
 const DnDFlow: React.FC = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const { highlightNode, centerOnNode, clearHighlights } = useFlowControls(
+    nodes,
+    setNodes,
+  );
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-  const { screenToFlowPosition, setCenter } = useReactFlow();
+  const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
   const [loading, setLoading] = useState(false);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  // const dispatch = useAppDispatch();
+  const reduxFlow = useAppSelector(
+    (state: RootState) => state.agentFlow.flowRunnerSlice,
+  );
 
   const onConnect = useCallback(
     (params: Edge | Connection) => {
@@ -47,6 +59,17 @@ const DnDFlow: React.FC = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   }, []);
+
+  useEffect(() => {
+    if (reduxFlow.nodes.length > 0)
+      setNodes(reduxFlow.nodes.map((n) => ({ ...n })));
+    if (reduxFlow.edges.length > 0)
+      setEdges(reduxFlow.edges.map((e) => ({ ...e })));
+  }, []);
+
+  // useEffect(() => {
+  //   dispatch(setFlow({ nodes, edges }));
+  // }, [nodes, edges]);
 
   const getTypedId = (type: string): string => {
     const key = `node-id-counter-${type}`;
@@ -109,15 +132,6 @@ const DnDFlow: React.FC = () => {
     }
   }, [nodes, edges]);
 
-  const handleNodeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const nodeId = event.target.value;
-    const node = nodes.find((n) => n.id === nodeId);
-    if (node) {
-      const { x, y } = node.position;
-      setCenter(x, y, { zoom: 1.5, duration: 800 });
-    }
-  };
-
   const getFlowOrder = (startNodeId: string): string[] => {
     const visited = new Set<string>();
     const order: string[] = [];
@@ -156,23 +170,26 @@ const DnDFlow: React.FC = () => {
         if (node) await executeNodeAction(node);
 
         // Center the view on the node
-        setCenter(node.position.x, node.position.y, {
-          zoom: 1.5,
-          duration: 500,
-        });
+        // setCenter(node.position.x, node.position.y, {
+        //   zoom: 1.5,
+        //   duration: 500,
+        // });
 
-        // Highlight the node
-        setNodes((nds) =>
-          nds.map((n) =>
-            n.id === nodeId
-              ? { ...n, style: { border: '2px solid #22c55e' } }
-              : { ...n, style: {} },
-          ),
-        );
+        // // Highlight the node
+        // setNodes((nds) =>
+        //   nds.map((n) =>
+        //     n.id === nodeId
+        //       ? { ...n, style: { border: '2px solid #22c55e' } }
+        //       : { ...n, style: {} },
+        //   ),
+        // );
+        centerOnNode(nodeId);
+        highlightNode(nodeId);
 
         // Wait for 2 seconds
         await new Promise((resolve) => setTimeout(resolve, 2000));
       }
+      clearHighlights();
     }
 
     // Clear highlights
@@ -180,7 +197,7 @@ const DnDFlow: React.FC = () => {
   };
 
   const executeNodeAction = async (node: Node) => {
-    // console.log(`▶ Executing: ${node}`, JSON.stringify(node));
+    console.log(`▶ Executing: ${node}`, JSON.stringify(node));
     const { message, details } = node.data ?? {};
     console.log(
       `→ Data logger from node   : ${message} / ${details}`,
@@ -194,48 +211,6 @@ const DnDFlow: React.FC = () => {
       <Sidebar onDragStart={onDragStart} />
 
       <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-        <div className="p-2 bg-transparent z-10 h-full w-[20%] pt-24 absolute bottom-2 right-2 pointer-events-none">
-          <div className="flex flex-col bg-white shadow-2xl space-x-10 h-full rounded-xl p-3 pointer-events-auto">
-            <label className="mr-2 text-gray-800 mb-2">Jump to node:</label>
-            <select onChange={handleNodeSelect} className="border p-1">
-              <option value="" className="text-gray-800">
-                -- Select --
-              </option>
-              {nodes.map((node) => (
-                <option key={node.id} value={node.id}>
-                  {(node.data?.label ?? node.id).toString()}
-                </option>
-              ))}
-            </select>
-
-            <div className="mt-4">
-              <label className="text-gray-800 mb-2 block">All Nodes:</label>
-              <ul className="overflow-y-auto max-h-64 space-y-1 pr-1">
-                {nodes.map((node) => (
-                  <li
-                    key={node.id}
-                    onMouseEnter={() => {
-                      setCenter(node.position.x, node.position.y, {
-                        zoom: 1.5,
-                        duration: 300,
-                      });
-                    }}
-                    className="cursor-pointer text-sm px-2 py-1 rounded hover:bg-gray-100 text-gray-700"
-                  >
-                    {(node.data?.label ?? node.id).toString()}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <button
-              onClick={playFlow}
-              className="bg-green-600 mr-10 mt-3 text-white px-3 py-1 rounded hover:bg-green-700"
-            >
-              ▶ Test Flow
-            </button>
-          </div>
-        </div>
         <AgentSettingsPanel
           selectedNode={selectedNode}
           nodes={nodes}

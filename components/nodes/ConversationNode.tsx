@@ -6,6 +6,13 @@ import { useCallback, useEffect, useId, useState } from 'react';
 import NodeActionsDropdown from '../actions/NodeActionsDropdown';
 import EditIcon from '../icons/EditIcon';
 import HashtagIcon from '../icons/HashtagIcon';
+import { useAppDispatch } from '@/common/utils/hooks/hooks';
+import {
+  // addSubnode,
+  // removeSubnode,
+  setNodeDetails,
+  setNodeMessage,
+} from '@/features/agent_flow/data/redux/agentSettingsSlice';
 
 export type PositionLoggerNodeData = {
   label?: string;
@@ -22,6 +29,7 @@ const ConversationNode: React.FC<NodeProps<PositionLoggerNode>> = ({
   isConnectable,
 }) => {
   const { setNodes } = useReactFlow();
+  const dispatch = useAppDispatch();
   const fallbackSubnodeId = useId();
   const [isEditing, setIsEditing] = useState(false);
   const [label, setLabel] = useState(data.label || 'Conversation');
@@ -145,7 +153,7 @@ const ConversationNode: React.FC<NodeProps<PositionLoggerNode>> = ({
             style={{ boxShadow: 'none' }}
             placeholder="Enter message here"
             value={data.message}
-            onChange={(e) =>
+            onChange={(e) => {
               setNodes((nodes) =>
                 nodes.map((node) =>
                   node.id === id
@@ -155,8 +163,9 @@ const ConversationNode: React.FC<NodeProps<PositionLoggerNode>> = ({
                       }
                     : node,
                 ),
-              )
-            }
+              );
+              dispatch(setNodeMessage({ id, message: e.target.value }));
+            }}
           />
         </div>
       </div>
@@ -169,17 +178,22 @@ const ConversationNode: React.FC<NodeProps<PositionLoggerNode>> = ({
             style={{ boxShadow: 'none' }}
             placeholder="Additional details"
             value={data.details}
-            onChange={(e) =>
-              setNodes((nodes) =>
-                nodes.map((node) =>
-                  node.id === id
-                    ? {
-                        ...node,
-                        data: { ...node.data, details: e.target.value },
-                      }
-                    : node,
-                ),
-              )
+            onChange={
+              (e) => {
+                setNodes((nodes) =>
+                  nodes.map((node) =>
+                    node.id === id
+                      ? {
+                          ...node,
+                          data: { ...node.data, details: e.target.value },
+                        }
+                      : node,
+                  ),
+                );
+                dispatch(setNodeDetails({ id, details: e.target.value }));
+              }
+
+              //
             }
           />
         </div>
