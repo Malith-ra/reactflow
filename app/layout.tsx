@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Link from 'next/link';
 import ClientReduxProvider from '@/common/ui/components/client/ClientReduxProvider';
+import ClearButton from '@/components/ClearButton/ClearButton';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -16,7 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Arimac AI studio',
-  description: 'AI Studio – Build, manage, and deploy your AI agents seamlessly.',
+  description:
+    'AI Studio – Build, manage, and deploy your AI agents seamlessly.',
   keywords: [
     'AI Studio',
     'AI Agent Builder',
@@ -25,16 +27,20 @@ export const metadata: Metadata = {
     'Conversational AI',
     'AI Assistant Builder',
     'Low-code AI platform',
-    'AI integration tools'
+    'AI integration tools',
   ],
   authors: [
-    { name: 'Arimac AI studio', url: 'https://ai-studio-poc.vercel.app/drag-and-drop' }
+    {
+      name: 'Arimac AI studio',
+      url: 'https://ai-studio-poc.vercel.app/drag-and-drop',
+    },
   ],
   creator: 'AI Studio Team',
   robots: 'index, follow',
   openGraph: {
     title: 'AI Studio – Build Powerful AI Agents with Ease',
-    description: 'Manage your AI agents, customize workflows, and monitor performance – all in one powerful AI dashboard.',
+    description:
+      'Manage your AI agents, customize workflows, and monitor performance – all in one powerful AI dashboard.',
     url: 'https://ai-studio-poc.vercel.app/drag-and-drop',
     siteName: 'AI Studio',
     images: [
@@ -42,24 +48,24 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'AI Studio Dashboard'
-      }
+        alt: 'AI Studio Dashboard',
+      },
     ],
     locale: 'en_US',
-    type: 'website'
+    type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'AI Studio',
-    description: 'Build and manage your AI agents with our intuitive dashboard.',
+    description:
+      'Build and manage your AI agents with our intuitive dashboard.',
     site: '@aistudioapp',
     creator: '@aistudioapp',
-    images: ['https://ai-studio-poc.vercel.app/og-image.png']
+    images: ['https://ai-studio-poc.vercel.app/og-image.png'],
   },
   metadataBase: new URL('https://ai-studio-poc.vercel.app/drag-and-drop'),
   themeColor: '#47C2FF',
 };
-
 
 export default function RootLayout({
   children,
@@ -92,6 +98,7 @@ export default function RootLayout({
                     Drag and Drop
                   </button>
                 </Link>
+                <ClearButton />
               </div>
             </div>
           </div>

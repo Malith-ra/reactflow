@@ -7,6 +7,7 @@ import { useFlowControls } from '@/components/agent_settings/hooks/useFlowContro
 import { useNodesState, useReactFlow } from '@xyflow/react';
 import { useAppSelector } from '@/common/utils/hooks/hooks';
 import StepControl from '../../StepControl';
+import { Bot, MessageCircle } from 'lucide-react';
 
 const TestLLMTab: React.FC = () => {
   //   const { nodes: reduxNodes, edges } = useAppSelector(
@@ -52,21 +53,36 @@ const TestLLMTab: React.FC = () => {
   const [isRunning, setIsRunning] = useState(false);
 
   const callChatAPI = async (text: string): Promise<string> => {
-    const res = await fetch('http://localhost:8000/chat/text', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text }),
     });
   
     if (!res.ok) {
-      console.error('Failed to fetch AI response');
-      return '⚠️ Failed to get response';
+      console.error('Failed to fetch from internal API');
+      return '⚠️ Internal API call failed';
     }
   
     const data = await res.json();
-    return data.llm_response_text || '⚠️ No response';
+    return data.aiResponse;
+  };
+  
+  const sendSMS = async (message: string) => {
+    try {
+      const response = await fetch('/api/sendsms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: '+94718772549',
+          message: message,
+        }),
+      });
+
+      await response.json();
+    } catch (err) {
+      console.error('SMS Error:', err);
+    }
   };
   
   const runFlowTest = async () => {
@@ -98,6 +114,8 @@ const TestLLMTab: React.FC = () => {
 
     traverse(startNode.id);
 
+    let lastAIResponse = '';
+
     for (const nodeId of order) {
       const node = nodes.find((n) => n.id === nodeId);
       if (node) {
@@ -117,13 +135,10 @@ const TestLLMTab: React.FC = () => {
 
           const aiQuery = `Prompt:\n${prompt}\n\nUser: ${message}\nSystem: ${details}`;
           console.log('🧠 Sending to AI...\n', aiQuery);
-          // await new Promise((r) => setTimeout(r, 1500));
 
           const aiResponse = await callChatAPI(message);
+          lastAIResponse = aiResponse;
 
-          // const aiResponse = `This is a dummy response to "${message}"`;
-
-          // Step 2: Replace spinner with AI response + input field
           setTimeline((prev) =>
             prev.map((s) =>
               s.id === nodeId
@@ -146,6 +161,12 @@ const TestLLMTab: React.FC = () => {
               );
               if (step) {
                 clearInterval(interval);
+  
+              if (node.type && lastAIResponse) {
+                console.log('📤 Sending SMS with AI response...');
+                sendSMS(lastAIResponse);
+              }
+  
                 resolve();
               }
             }, 300);
@@ -156,11 +177,9 @@ const TestLLMTab: React.FC = () => {
           setTimeline((prev) => [...prev, baseStep]);
         }
 
-        await new Promise((r) => setTimeout(r, 3000));
       }
     }
 
-    await new Promise((r) => setTimeout(r, 1000));
     clearHighlights();
     setIsRunning(false);
   };
@@ -209,16 +228,18 @@ const TestLLMTab: React.FC = () => {
       {/* Timeline scrollable */}
       <div className="mt-4 overflow-y-auto border-t pt-4 flex-1">
         <h4 className="font-semibold mb-2 text-gray-700">Timeline</h4>
-        <ul className="border-l-2 border-blue-300 pl-4 space-y-3">
+        <div className="border-l-2 border-blue-300 pl-4 space-y-3">
           {timeline.map((step, index) => (
-            <li key={step.id + index} className="relative">
-              <div className="absolute -left-[9px] top-[6px] h-3 w-3 rounded-full bg-blue-500" />
+            <div key={step.id + index} className="relative">
+              {/* <div className="absolute -left-[9px] top-[6px] h-3 w-3 rounded-full bg-blue-500" /> */}
               <div className="mb-1 text-blue-900 font-medium">
                 {index + 1}. {step.label}
               </div>
               {step.message && (
-                <div className="text-xs text-gray-600">
-                  <strong>Message:</strong> {step.message}
+                <div className="text-xs text-gray-600 bg-[#f3ac9a] p-2 rounded mt-1">
+                  <strong>
+                    <MessageCircle className="inline w-4 h-4 mr-1" />
+                    Message:</strong> {step.message}
                 </div>
               )}
               {step.details && (
@@ -226,7 +247,7 @@ const TestLLMTab: React.FC = () => {
                   <strong>Details:</strong> {step.details}
                 </div>
               )}
-              {step.aiQuery && (
+              {/* {step.aiQuery && (
                 <div className="text-xs text-purple-700 bg-purple-50 p-2 rounded mt-1">
                   <strong>🔄 Sent to AI:</strong>
                   <pre className="whitespace-pre-wrap text-xs">
@@ -257,10 +278,10 @@ const TestLLMTab: React.FC = () => {
                     </div>
                   )}
                 </div>
-              )}
+              )} */}
               {step.aiResponse && (
                 <div className="text-xs text-green-700 bg-green-50 p-2 rounded mt-1">
-                  <strong>🤖 AI Response:</strong> {step.aiResponse}
+                  <strong><Bot className="inline w-4 h-4 mr-1" /> AI Response:</strong> {step.aiResponse}
                 </div>
               )}
 
@@ -284,9 +305,9 @@ const TestLLMTab: React.FC = () => {
                   }}
                 />
               )}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );

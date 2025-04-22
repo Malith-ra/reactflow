@@ -11,6 +11,7 @@ import {
   PhoneForwarded,
   Power,
   QrCode,
+  Send,
   Split
 } from 'lucide-react';
 import React, { DragEvent } from 'react';
@@ -165,6 +166,19 @@ const Sidebar: React.FC<SidebarProps> = ({ onDragStart }) => {
           <div className="col-span-2 items-center">
             <Split className="inline-block mr-1" size={16} />
             Logic Split Node
+          </div>
+        </div>
+      </div>
+      <div
+        className="dndnode input cursor-move"
+        draggable
+        onDragStart={(e) => handleDragStart(e, 'sms')}
+      >
+        <div className="grid grid-cols-3">
+          <div className="col-span-1" />
+          <div className="col-span-2 items-center">
+            <Send className="inline-block mr-1" size={16} />
+            Send SMS
           </div>
         </div>
       </div>

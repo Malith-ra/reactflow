@@ -238,7 +238,7 @@ a {
   height: 5px;
 }
 
-.react-flow__node-start,.react-flow__node-voice,.react-flow__node-conversation,.react-flow__node-ending,.react-flow__node-function,.react-flow__node-call-transfer,.react-flow__node-press-digit,.react-flow__node-logic-split {
+.react-flow__node-start,.react-flow__node-voice,.react-flow__node-conversation,.react-flow__node-ending,.react-flow__node-function,.react-flow__node-call-transfer,.react-flow__node-press-digit,.react-flow__node-logic-split,.react-flow__node-sms {
   background: transparent;
   border: none;
   box-shadow: none !important;

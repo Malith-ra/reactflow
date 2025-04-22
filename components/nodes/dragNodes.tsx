@@ -10,6 +10,7 @@ import FunctionNode from './FunctionNode';
 import CallTransferNode from './CallTransferNode';
 import PressDigitNode from './PressDigitNode';
 import LogicSplitNode from './LogicSplitNode';
+import SendSMSNode from './SendSMSNode';
 
 
 export const nodeDragTypes: NodeTypes = {
@@ -22,6 +23,7 @@ export const nodeDragTypes: NodeTypes = {
   'call-transfer': CallTransferNode,
   'press-digit': PressDigitNode,
   'logic-split': LogicSplitNode,
+  sms: SendSMSNode,
 };
 
 export type CustomNodeType = BuiltInNode | PositionLoggerNodeType;
